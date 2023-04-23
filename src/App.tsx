@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { BASE_URL } from "./constants";
+import { BASE_URL } from "./shared/constants";
 import WineLotteryLandingPage from "./components/WineLotteryLandingPage";
 
 function App() {
