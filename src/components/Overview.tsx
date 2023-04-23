@@ -13,6 +13,7 @@ import {
   useLocation,
   useNavigate,
 } from "react-router-dom";
+import { isEmpty } from "lodash";
 
 interface ILotteryDetails {
   availableTicketsInfo: string;
@@ -28,10 +29,16 @@ const Overview = () => {
 
   useGetLotteryInstance(location, setLotteryDetails);
 
+  const Content = () =>
+    isEmpty(lotteryDetails) ? (
+      <p>{CALL_TO_ACTION}</p>
+    ) : (
+      <LotteryDetails lotteryDetails={lotteryDetails} />
+    );
+
   return (
     <OverviewWrapper>
-      {CALL_TO_ACTION}
-      <LotteryDetails lotteryDetails={lotteryDetails} />
+      <Content />
       <Button
         onClick={() =>
           newLotteryButtonClickHandler(navigate, setLotteryDetails)
