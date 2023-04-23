@@ -37,7 +37,7 @@ const WineLotteryLandingPage = () => {
         break;
       }
       default: {
-        throw new Error(INVALID_TAB_ERROR);
+        setActiveTab(TabCategory.TAB_OVERVIEW);
       }
     }
   }, [location.pathname]);
