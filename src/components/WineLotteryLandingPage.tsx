@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Outlet, useNavigate, useParams } from "react-router-dom";
+import { Location, Outlet, useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import {
+  BASE_URL,
   INVALID_TAB_ERROR,
   MAIN_TITLE_WINE_LOTTERY_APPLICATION,
   ROUTE_CONTEST,
@@ -20,20 +21,18 @@ import { TabCategory } from "../shared/enums";
 const WineLotteryLandingPage = () => {
   const [activeTab, setActiveTab] = useState(TabCategory.TAB_OVERVIEW);
   const navigate = useNavigate();
-
-  const { overview: topic } = useParams();
-
+  const location = useLocation();
   useEffect(() => {
-    switch (topic) {
-      case ROUTE_OVERVIEW: {
+    switch (location.pathname) {
+      case `/${BASE_URL}/${ROUTE_OVERVIEW}`: {
         setActiveTab(TabCategory.TAB_OVERVIEW);
         break;
       }
-      case ROUTE_TICKETS: {
+      case `/${BASE_URL}/${ROUTE_TICKETS}`: {
         setActiveTab(TabCategory.TAB_BUY_TICKETS);
         break;
       }
-      case ROUTE_CONTEST: {
+      case `/${BASE_URL}/${ROUTE_CONTEST}`: {
         setActiveTab(TabCategory.TAB_DRAW_WINNERS);
         break;
       }
@@ -41,22 +40,31 @@ const WineLotteryLandingPage = () => {
         throw new Error(INVALID_TAB_ERROR);
       }
     }
-  }, [topic]);
+  }, [location.pathname]);
 
-  const handleChange = (index: number) => {
+  const handleChange = (index: number, location: Location) => {
     switch (index) {
       case TabCategory.TAB_OVERVIEW: {
-        navigate(ROUTE_OVERVIEW);
+        navigate({
+          pathname: ROUTE_OVERVIEW,
+          search: location.search,
+        });
         setActiveTab(TabCategory.TAB_OVERVIEW);
         break;
       }
       case TabCategory.TAB_BUY_TICKETS: {
-        navigate(ROUTE_TICKETS);
+        navigate({
+          pathname: ROUTE_TICKETS,
+          search: location.search,
+        });
         setActiveTab(TabCategory.TAB_BUY_TICKETS);
         break;
       }
       case TabCategory.TAB_DRAW_WINNERS: {
-        navigate(ROUTE_CONTEST);
+        navigate({
+          pathname: ROUTE_CONTEST,
+          search: location.search,
+        });
         setActiveTab(TabCategory.TAB_DRAW_WINNERS);
         break;
       }
@@ -68,7 +76,10 @@ const WineLotteryLandingPage = () => {
   return (
     <WineLotteryLandingPageWrapper>
       <h2>{MAIN_TITLE_WINE_LOTTERY_APPLICATION}</h2>
-      <TabComponent activeTab={activeTab} handleChange={handleChange} />
+      <TabComponent
+        activeTab={activeTab}
+        handleChange={(index) => handleChange(index, location)}
+      />
       <Outlet />
     </WineLotteryLandingPageWrapper>
   );

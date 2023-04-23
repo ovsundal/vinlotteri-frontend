@@ -3,6 +3,7 @@ export const BASE_URL = "winelottery";
 export const ROUTE_OVERVIEW = "overview";
 export const ROUTE_TICKETS = "tickets";
 export const ROUTE_CONTEST = "contest";
+export const ROUTE_PARAMETER_LOTTERY_ID = "lotteryId";
 
 // backend address and endpoints
 export const BACKEND_URL = "https://localhost:44306";
