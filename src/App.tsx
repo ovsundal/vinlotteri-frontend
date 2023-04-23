@@ -18,9 +18,9 @@ function App() {
             index
             element={<Navigate replace to={`${ROUTE_OVERVIEW}`} />}
           />
-          <Route path={`:${ROUTE_OVERVIEW}`} element={<></>} />
-          <Route path={`:${ROUTE_TICKETS}`} element={<></>} />
-          <Route path={`:${ROUTE_CONTEST}`} element={<></>} />
+          <Route path={`${ROUTE_OVERVIEW}`} element={<></>} />
+          <Route path={`${ROUTE_TICKETS}`} element={<></>} />
+          <Route path={`${ROUTE_CONTEST}`} element={<></>} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -1,5 +1,5 @@
-import { ILotteryDetails } from "./ILotteryDetails";
+import { ILotteryResponse } from "./ILotteryResponse";
 
 export interface IWineLotteryClientFunctions {
-  createNewLottery: () => Promise<ILotteryDetails>;
+  createNewLottery: () => Promise<ILotteryResponse>;
 }
