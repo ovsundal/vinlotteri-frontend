@@ -17,3 +17,6 @@ export const BUTTON_NEW_LOTTERY = "New lottery";
 
 // overview pane
 export const CALL_TO_ACTION = `Click ${BUTTON_NEW_LOTTERY} button to start`;
+
+// error messages
+export const INVALID_TAB_ERROR = "The route being accessed does not exist";
