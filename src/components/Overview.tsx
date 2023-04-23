@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { Button } from "@equinor/eds-core-react";
 import {
@@ -7,7 +7,12 @@ import {
   ROUTE_PARAMETER_LOTTERY_ID,
 } from "../shared/constants";
 import backendFacadeClientFunctions from "../services/backendFacadeClientFunctions";
-import { NavigateFunction, useNavigate } from "react-router-dom";
+import {
+  Location,
+  NavigateFunction,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 
 interface ILotteryDetails {
   availableTicketsInfo: string;
@@ -19,6 +24,9 @@ interface ILotteryDetails {
 const Overview = () => {
   const [lotteryDetails, setLotteryDetails] = useState({} as ILotteryDetails);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useGetLotteryInstance(location, setLotteryDetails);
 
   return (
     <OverviewWrapper>
@@ -33,6 +41,28 @@ const Overview = () => {
       </Button>
     </OverviewWrapper>
   );
+};
+
+const useGetLotteryInstance = (
+  location: Location,
+  setLotteryDetails: React.Dispatch<React.SetStateAction<ILotteryDetails>>
+) => {
+  useEffect(() => {
+    const getLotteryInstanceById = async (lotteryId: number) => {
+      const lotteryInstance =
+        await backendFacadeClientFunctions().getLotteryById(lotteryId);
+
+      setLotteryDetails({ ...lotteryInstance });
+    };
+
+    const lotteryId = new URLSearchParams(location?.search).get(
+      ROUTE_PARAMETER_LOTTERY_ID
+    );
+
+    if (lotteryId && parseInt(lotteryId)) {
+      getLotteryInstanceById(parseInt(lotteryId));
+    }
+  }, []);
 };
 
 const newLotteryButtonClickHandler = (
