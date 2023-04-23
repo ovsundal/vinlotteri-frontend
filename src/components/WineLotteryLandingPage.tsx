@@ -6,14 +6,15 @@ import {
   TAB_BUY_TICKETS,
   TAB_DRAW_WINNERS,
   TAB_OVERVIEW,
-} from "../constants";
+} from "../shared/constants";
 import { Tabs } from "@equinor/eds-core-react";
 import Overview from "./Overview";
 import Tickets from "./Tickets";
 import Contest from "./Contest";
+import { TabCategory } from "../shared/enums";
 
 const WineLotteryLandingPage = () => {
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState(TabCategory.TAB_OVERVIEW);
 
   const handleChange = (index: number) => {
     setActiveTab(index);
