@@ -1,88 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import { Button } from "@equinor/eds-core-react";
-import {
-  BUTTON_NEW_LOTTERY,
-  CALL_TO_ACTION,
-  ROUTE_PARAMETER_LOTTERY_ID,
-} from "../shared/constants";
-import backendFacadeClientFunctions from "../services/backendFacadeClientFunctions";
-import {
-  Location,
-  NavigateFunction,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { BUTTON_NEW_LOTTERY, CALL_TO_ACTION } from "../shared/constants";
+import { useOutletContext } from "react-router-dom";
 import { isEmpty } from "lodash";
+import { ILotteryOutletContext } from "../interfaces/ILotteryOutletContext";
+import { ILotteryDetails } from "../interfaces/ILotteryDetails";
 
-interface ILotteryDetails {
-  availableTicketsInfo: string;
-  lotteryIncomeInfo: string;
-  spentOnPrizesInfo: string;
-  ticketPriceInfo: string;
-  totalBalanceInfo: string;
-}
 const Overview = () => {
-  const [lotteryDetails, setLotteryDetails] = useState({} as ILotteryDetails);
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  useGetLotteryInstance(location, setLotteryDetails);
-
-  const Content = () =>
-    isEmpty(lotteryDetails) ? (
-      <p>{CALL_TO_ACTION}</p>
-    ) : (
-      <LotteryDetails lotteryDetails={lotteryDetails} />
-    );
+  const { lotteryInstance, newLotteryClickHandler }: ILotteryOutletContext =
+    useOutletContext();
 
   return (
     <OverviewWrapper>
-      <Content />
-      <Button
-        onClick={() =>
-          newLotteryButtonClickHandler(navigate, setLotteryDetails)
-        }
-      >
-        {BUTTON_NEW_LOTTERY}
-      </Button>
+      <Content lotteryDetails={lotteryInstance} />
+      <Button onClick={newLotteryClickHandler}>{BUTTON_NEW_LOTTERY}</Button>
     </OverviewWrapper>
   );
 };
 
-const useGetLotteryInstance = (
-  location: Location,
-  setLotteryDetails: React.Dispatch<React.SetStateAction<ILotteryDetails>>
-) => {
-  useEffect(() => {
-    const getLotteryInstanceById = async (lotteryId: number) => {
-      const lotteryInstance =
-        await backendFacadeClientFunctions().getLotteryById(lotteryId);
-
-      setLotteryDetails({ ...lotteryInstance });
-    };
-
-    const lotteryId = new URLSearchParams(location?.search).get(
-      ROUTE_PARAMETER_LOTTERY_ID
-    );
-
-    if (lotteryId && parseInt(lotteryId)) {
-      getLotteryInstanceById(parseInt(lotteryId));
-    }
-  }, []);
-};
-
-const newLotteryButtonClickHandler = (
-  navigate: NavigateFunction,
-  setLotteryDetails: React.Dispatch<React.SetStateAction<ILotteryDetails>>
-) => {
-  backendFacadeClientFunctions()
-    .createNewLottery()
-    .then((result) => {
-      setLotteryDetails({ ...result });
-      navigate({ search: `${ROUTE_PARAMETER_LOTTERY_ID}=${result.id}` });
-    });
-};
+const Content = ({ lotteryDetails }: { lotteryDetails: ILotteryDetails }) =>
+  isEmpty(lotteryDetails) ? (
+    <p>{CALL_TO_ACTION}</p>
+  ) : (
+    <LotteryDetails lotteryDetails={lotteryDetails} />
+  );
 
 const LotteryDetails = ({
   lotteryDetails,
