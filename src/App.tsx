@@ -7,6 +7,9 @@ import {
   ROUTE_TICKETS,
 } from "./shared/constants";
 import WineLotteryLandingPage from "./components/WineLotteryLandingPage";
+import Overview from "./components/Overview";
+import Tickets from "./components/Tickets";
+import Contest from "./components/Contest";
 
 function App() {
   return (
@@ -18,9 +21,9 @@ function App() {
             index
             element={<Navigate replace to={`${ROUTE_OVERVIEW}`} />}
           />
-          <Route path={`${ROUTE_OVERVIEW}`} element={<></>} />
-          <Route path={`${ROUTE_TICKETS}`} element={<></>} />
-          <Route path={`${ROUTE_CONTEST}`} element={<></>} />
+          <Route path={`${ROUTE_OVERVIEW}`} element={<Overview />} />
+          <Route path={`${ROUTE_TICKETS}`} element={<Tickets />} />
+          <Route path={`${ROUTE_CONTEST}`} element={<Contest />} />
         </Route>
       </Routes>
     </BrowserRouter>
