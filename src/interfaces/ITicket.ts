@@ -1,4 +1,5 @@
 export interface ITicket {
-  ticketNumber: number;
+  number: number;
   owner: string;
+  hasWon: boolean;
 }
