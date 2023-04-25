@@ -56,47 +56,55 @@ const WineLotteryLandingPage = () => {
     setLotteryInstance
   );
 
-  const handleChange = (index: number, location: Location) => {
-    switch (index) {
-      case TabCategory.TAB_OVERVIEW: {
-        navigate({
-          pathname: ROUTE_OVERVIEW,
-          search: location.search,
-        });
-        setActiveTab(TabCategory.TAB_OVERVIEW);
-        break;
-      }
-      case TabCategory.TAB_BUY_TICKETS: {
-        navigate({
-          pathname: ROUTE_TICKETS,
-          search: location.search,
-        });
-        setActiveTab(TabCategory.TAB_BUY_TICKETS);
-        break;
-      }
-      case TabCategory.TAB_DRAW_WINNERS: {
-        navigate({
-          pathname: ROUTE_CONTEST,
-          search: location.search,
-        });
-        setActiveTab(TabCategory.TAB_DRAW_WINNERS);
-        break;
-      }
-      default:
-        throw new Error(INVALID_TAB_ERROR);
-    }
-    setActiveTab(index);
-  };
   return (
     <WineLotteryLandingPageWrapper>
       <h2>{MAIN_TITLE_WINE_LOTTERY_APPLICATION}</h2>
       <TabComponent
         activeTab={activeTab}
-        handleChange={(index) => handleChange(index, location)}
+        handleChange={(index) =>
+          handleChange(index, location, navigate, setActiveTab)
+        }
       />
       <Outlet context={{ lotteryInstance, newLotteryClickHandler }} />
     </WineLotteryLandingPageWrapper>
   );
+};
+
+const handleChange = (
+  index: number,
+  location: Location,
+  navigate: NavigateFunction,
+  setActiveTab: React.Dispatch<React.SetStateAction<TabCategory>>
+) => {
+  switch (index) {
+    case TabCategory.TAB_OVERVIEW: {
+      navigate({
+        pathname: ROUTE_OVERVIEW,
+        search: location.search,
+      });
+      setActiveTab(TabCategory.TAB_OVERVIEW);
+      break;
+    }
+    case TabCategory.TAB_BUY_TICKETS: {
+      navigate({
+        pathname: ROUTE_TICKETS,
+        search: location.search,
+      });
+      setActiveTab(TabCategory.TAB_BUY_TICKETS);
+      break;
+    }
+    case TabCategory.TAB_DRAW_WINNERS: {
+      navigate({
+        pathname: ROUTE_CONTEST,
+        search: location.search,
+      });
+      setActiveTab(TabCategory.TAB_DRAW_WINNERS);
+      break;
+    }
+    default:
+      throw new Error(INVALID_TAB_ERROR);
+  }
+  setActiveTab(index);
 };
 
 const useGetLotteryInstance = (
