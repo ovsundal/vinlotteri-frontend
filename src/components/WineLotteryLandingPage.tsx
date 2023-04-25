@@ -19,7 +19,7 @@ import {
   TAB_DRAW_WINNERS,
   TAB_OVERVIEW,
 } from "../shared/constants";
-import { Tabs } from "@equinor/eds-core-react";
+import { DotProgress, Tabs } from "@equinor/eds-core-react";
 import { TabCategory } from "../shared/enums";
 import backendFacadeClientFunctions from "../services/backendFacadeClientFunctions";
 import { ILotteryDetails } from "../interfaces/ILotteryDetails";
@@ -27,6 +27,7 @@ import { ILotteryDetails } from "../interfaces/ILotteryDetails";
 const WineLotteryLandingPage = () => {
   const [lotteryInstance, setLotteryInstance] = useState({} as ILotteryDetails);
   const [activeTab, setActiveTab] = useState(TabCategory.TAB_OVERVIEW);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -49,11 +50,12 @@ const WineLotteryLandingPage = () => {
       }
     }
   }, [location.pathname]);
-  useGetLotteryInstance(location, setLotteryInstance);
+  useGetLotteryInstance(location, setLotteryInstance, setIsLoading);
 
   const newLotteryClickHandler = newLotteryButtonClickHandler(
     navigate,
-    setLotteryInstance
+    setLotteryInstance,
+    setIsLoading
   );
 
   return (
@@ -65,7 +67,11 @@ const WineLotteryLandingPage = () => {
           handleChange(index, location, navigate, setActiveTab)
         }
       />
-      <Outlet context={{ lotteryInstance, newLotteryClickHandler }} />
+      {isLoading ? (
+        <DotProgress color="primary" />
+      ) : (
+        <Outlet context={{ lotteryInstance, newLotteryClickHandler }} />
+      )}
     </WineLotteryLandingPageWrapper>
   );
 };
@@ -109,14 +115,19 @@ const handleChange = (
 
 const useGetLotteryInstance = (
   location: Location,
-  setLotteryDetails: React.Dispatch<React.SetStateAction<ILotteryDetails>>
+  setLotteryDetails: React.Dispatch<React.SetStateAction<ILotteryDetails>>,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   useEffect(() => {
     const getLotteryInstanceById = async (lotteryId: number) => {
-      const lotteryInstance =
-        await backendFacadeClientFunctions().getLotteryById(lotteryId);
-
-      setLotteryDetails({ ...lotteryInstance });
+      try {
+        setIsLoading(true);
+        const lotteryInstance =
+          await backendFacadeClientFunctions().getLotteryById(lotteryId);
+        setLotteryDetails({ ...lotteryInstance });
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     const lotteryId = new URLSearchParams(location?.search).get(
@@ -132,15 +143,23 @@ const useGetLotteryInstance = (
 const newLotteryButtonClickHandler =
   (
     navigate: NavigateFunction,
-    setLotteryInstance: React.Dispatch<React.SetStateAction<ILotteryDetails>>
+    setLotteryInstance: React.Dispatch<React.SetStateAction<ILotteryDetails>>,
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   ) =>
   () => {
-    backendFacadeClientFunctions()
-      .createNewLottery()
-      .then((result) => {
-        setLotteryInstance({ ...result });
-        navigate({ search: `${ROUTE_PARAMETER_LOTTERY_ID}=${result.id}` });
-      });
+    try {
+      setIsLoading(true);
+      backendFacadeClientFunctions()
+        .createNewLottery()
+        .then((result) => {
+          setLotteryInstance({ ...result });
+          navigate({ search: `${ROUTE_PARAMETER_LOTTERY_ID}=${result.id}` });
+        });
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
 const TabComponent = ({
