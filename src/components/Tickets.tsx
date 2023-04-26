@@ -6,11 +6,14 @@ import {
   TABLE_HEADER_TICKET_NUMBER,
 } from "../shared/constants";
 import { ITicket } from "../interfaces/ITicket";
+import { ILotteryOutletContext } from "../interfaces/ILotteryOutletContext";
+import { useOutletContext } from "react-router-dom";
 
 const Tickets = () => {
   const [ticketList, setTicketList] = useState([] as ITicket[]);
+  const { lotteryInstance }: ILotteryOutletContext = useOutletContext();
 
-  useSetupTicketList(setTicketList);
+  useSetupTicketList(lotteryInstance.tickets, setTicketList);
 
   return (
     <div>
@@ -23,9 +26,9 @@ const Tickets = () => {
           </Table.Row>
         </Table.Head>
         <Table.Body>
-          {ticketList.map(({ ticketNumber, owner }) => (
-            <Table.Row>
-              <Table.Cell>{ticketNumber}</Table.Cell>
+          {ticketList.map(({ number, owner }) => (
+            <Table.Row key={number}>
+              <Table.Cell>{number}</Table.Cell>
               {/*if ticket is already bought, show text field and do not render a buy button */}
               {owner ? (
                 <Table.Cell>{owner}</Table.Cell>
@@ -48,21 +51,31 @@ const Tickets = () => {
 };
 
 const useSetupTicketList = (
+  boughtTickets: ITicket[],
   setTicketList: React.Dispatch<React.SetStateAction<ITicket[]>>
 ) => {
   useEffect(() => {
+    if (boughtTickets == null) {
+      return;
+    }
     const tickets: ITicket[] = [];
-
+    // generate list of 100 available tickets
     for (let i = 1; i <= 100; i++) {
-      const ticket = {
-        ticketNumber: i,
-        owner: "",
-      };
+      const boughtTicket = boughtTickets.find((ticket) => ticket.number === i);
 
-      tickets.push(ticket);
+      // if ticket has been bought, insert that. Otherwise, insert new ticket
+      if (boughtTicket) {
+        tickets.push(boughtTicket);
+      } else {
+        tickets.push({
+          number: i,
+          owner: "",
+          hasWon: false,
+        } as ITicket);
+      }
     }
     setTicketList(tickets);
-  }, [setTicketList]);
+  }, [setTicketList, boughtTickets]);
 };
 
 export default Tickets;
