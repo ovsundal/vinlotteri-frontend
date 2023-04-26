@@ -8,6 +8,8 @@ export const ROUTE_PARAMETER_LOTTERY_ID = "lotteryId";
 // backend address and endpoints
 export const BACKEND_URL = "https://localhost:44306";
 export const BACKEND_ENDPOINT_CREATE_LOTTERY = "Lottery";
+export const BACKEND_ENDPOINT_GET_LOTTERY = "Lottery";
+export const BACKEND_ENDPOINT_BUY_TICKET = "Lottery";
 
 // html elements
 export const TAB_OVERVIEW = "Overview";

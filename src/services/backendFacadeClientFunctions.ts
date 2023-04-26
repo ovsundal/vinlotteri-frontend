@@ -1,6 +1,8 @@
 import { IWineLotteryClientFunctions } from "../interfaces/IWineLotteryClientFunctions";
 import {
+  BACKEND_ENDPOINT_BUY_TICKET,
   BACKEND_ENDPOINT_CREATE_LOTTERY,
+  BACKEND_ENDPOINT_GET_LOTTERY,
   BACKEND_URL,
 } from "../shared/constants";
 import { ILotteryDetails } from "../interfaces/ILotteryDetails";
@@ -14,9 +16,20 @@ const backendFacadeClientFunctions = (): IWineLotteryClientFunctions => {
       return (await response.json()) as ILotteryDetails;
     },
     createNewLottery: async () => {
-      const address = `${BACKEND_URL}/${BACKEND_ENDPOINT_CREATE_LOTTERY}`;
+      const address = `${BACKEND_URL}/${BACKEND_ENDPOINT_GET_LOTTERY}`;
       const response = await fetch(address);
 
+      return (await response.json()) as ILotteryDetails;
+    },
+    buyTicket: async (lotteryId, ticket) => {
+      const address = `${BACKEND_URL}/${BACKEND_ENDPOINT_BUY_TICKET}/${lotteryId}`;
+      const response = await fetch(address, {
+        method: "PUT",
+        body: JSON.stringify(ticket),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       return (await response.json()) as ILotteryDetails;
     },
   };

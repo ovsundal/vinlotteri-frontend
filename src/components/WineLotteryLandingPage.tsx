@@ -23,6 +23,7 @@ import { DotProgress, Tabs } from "@equinor/eds-core-react";
 import { TabCategory } from "../shared/enums";
 import backendFacadeClientFunctions from "../services/backendFacadeClientFunctions";
 import { ILotteryDetails } from "../interfaces/ILotteryDetails";
+import { ITicket } from "../interfaces/ITicket";
 
 const WineLotteryLandingPage = () => {
   const [lotteryInstance, setLotteryInstance] = useState({} as ILotteryDetails);
@@ -52,8 +53,15 @@ const WineLotteryLandingPage = () => {
   }, [location.pathname]);
   useGetLotteryInstance(location, setLotteryInstance, setIsLoading);
 
+  // use curried functions to set and store variables via closure
   const newLotteryClickHandler = newLotteryButtonClickHandler(
     navigate,
+    setLotteryInstance,
+    setIsLoading
+  );
+
+  const newBuyTicketClickHandler = buyTicketClickHandler(
+    lotteryInstance.id,
     setLotteryInstance,
     setIsLoading
   );
@@ -70,7 +78,14 @@ const WineLotteryLandingPage = () => {
       {isLoading ? (
         <DotProgress color="primary" />
       ) : (
-        <Outlet context={{ lotteryInstance, newLotteryClickHandler }} />
+        <Outlet
+          context={{
+            lotteryInstance,
+            newLotteryClickHandler,
+            buyTicketClickHandler,
+            newBuyTicketClickHandler,
+          }}
+        />
       )}
     </WineLotteryLandingPageWrapper>
   );
@@ -157,6 +172,26 @@ const newLotteryButtonClickHandler =
         });
     } catch (e) {
       console.warn(e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+const buyTicketClickHandler =
+  (
+    lotteryId: number,
+    setLotteryInstance: React.Dispatch<React.SetStateAction<ILotteryDetails>>,
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  ) =>
+  (ticket: ITicket) => {
+    try {
+      setIsLoading(true);
+      backendFacadeClientFunctions()
+        .buyTicket(lotteryId, ticket)
+        .then((result) => {
+          setLotteryInstance(result);
+        });
+    } catch (e) {
     } finally {
       setIsLoading(false);
     }
