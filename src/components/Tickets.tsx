@@ -8,12 +8,21 @@ import {
 import { ITicket } from "../interfaces/ITicket";
 import { ILotteryOutletContext } from "../interfaces/ILotteryOutletContext";
 import { useOutletContext } from "react-router-dom";
+import { cloneDeep } from "lodash";
 
 const Tickets = () => {
   const [ticketList, setTicketList] = useState([] as ITicket[]);
-  const { lotteryInstance }: ILotteryOutletContext = useOutletContext();
+  const { lotteryInstance, newBuyTicketClickHandler }: ILotteryOutletContext =
+    useOutletContext();
+
+  // use this object to keep track of input changes in each row
+  const ticketListCopy = cloneDeep(ticketList);
 
   useSetupTicketList(lotteryInstance.tickets, setTicketList);
+
+  const handleInputChange = (e: any, number: number) => {
+    ticketListCopy[number - 1].owner = e.target.value;
+  };
 
   return (
     <div>
@@ -34,12 +43,23 @@ const Tickets = () => {
                 <Table.Cell>{owner}</Table.Cell>
               ) : (
                 <Table.Cell>
-                  <Input />
+                  <Input
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                      handleInputChange(e, number)
+                    }
+                  />
                 </Table.Cell>
               )}
               <Table.Cell>
                 {!owner && (
-                  <Button variant="outlined">{BUTTON_BUY_TICKET}</Button>
+                  <Button
+                    variant="outlined"
+                    onClick={() =>
+                      newBuyTicketClickHandler(ticketListCopy[number - 1])
+                    }
+                  >
+                    {BUTTON_BUY_TICKET}
+                  </Button>
                 )}
               </Table.Cell>
             </Table.Row>
