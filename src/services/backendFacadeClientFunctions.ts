@@ -4,6 +4,7 @@ import {
   BACKEND_ENDPOINT_CREATE_LOTTERY,
   BACKEND_ENDPOINT_GET_LOTTERY,
   BACKEND_URL,
+  NO_OWNER_PROVIDED,
 } from "../shared/constants";
 import { ILotteryDetails } from "../interfaces/ILotteryDetails";
 
@@ -30,6 +31,10 @@ const backendFacadeClientFunctions = (): IWineLotteryClientFunctions => {
           "Content-Type": "application/json",
         },
       });
+
+      if (!response.ok) {
+        throw new Error(NO_OWNER_PROVIDED);
+      }
       return (await response.json()) as ILotteryDetails;
     },
   };

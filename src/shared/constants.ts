@@ -24,6 +24,7 @@ export const CALL_TO_ACTION = `Click ${BUTTON_NEW_LOTTERY} button to start`;
 
 // error messages
 export const INVALID_TAB_ERROR = "The route being accessed does not exist";
+export const NO_OWNER_PROVIDED = "No name was provided";
 
 // table related
 export const TABLE_HEADER_TICKET_NUMBER = "Ticket number";
