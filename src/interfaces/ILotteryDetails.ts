@@ -10,4 +10,5 @@ export interface ILotteryDetails {
   totalBalanceInfo: string;
   tickets: ITicket[];
   wines: IWine[];
+  nextWineToAward?: IWine;
 }

@@ -2,6 +2,7 @@ import { IWineLotteryClientFunctions } from "../interfaces/IWineLotteryClientFun
 import {
   BACKEND_ENDPOINT_BUY_TICKET,
   BACKEND_ENDPOINT_CREATE_LOTTERY,
+  BACKEND_ENDPOINT_DRAW_WINNER,
   BACKEND_ENDPOINT_GET_LOTTERY,
   BACKEND_URL,
   NO_OWNER_PROVIDED,
@@ -35,6 +36,12 @@ const backendFacadeClientFunctions = (): IWineLotteryClientFunctions => {
       if (!response.ok) {
         throw new Error(NO_OWNER_PROVIDED);
       }
+      return (await response.json()) as ILotteryDetails;
+    },
+    drawWinner: async (lotteryId: number, wineId: number) => {
+      const address = `${BACKEND_URL}/${BACKEND_ENDPOINT_DRAW_WINNER}/${lotteryId}/${wineId}`;
+      const response = await fetch(address);
+
       return (await response.json()) as ILotteryDetails;
     },
   };

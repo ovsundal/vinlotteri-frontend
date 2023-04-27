@@ -66,6 +66,12 @@ const WineLotteryLandingPage = () => {
     setIsLoading
   );
 
+  const newDrawWinnerClickHandler = drawWinnerClickHandler(
+    lotteryInstance.id,
+    setLotteryInstance,
+    setIsLoading
+  );
+
   return (
     <WineLotteryLandingPageWrapper>
       <h2>{MAIN_TITLE_WINE_LOTTERY_APPLICATION}</h2>
@@ -84,6 +90,7 @@ const WineLotteryLandingPage = () => {
             newLotteryClickHandler,
             buyTicketClickHandler,
             newBuyTicketClickHandler,
+            newDrawWinnerClickHandler,
           }}
         />
       )}
@@ -192,6 +199,27 @@ const buyTicketClickHandler =
           setLotteryInstance(result);
         });
     } catch (e) {
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+const drawWinnerClickHandler =
+  (
+    lotteryId: number,
+    setLotteryInstance: React.Dispatch<React.SetStateAction<ILotteryDetails>>,
+    setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
+  ) =>
+  (wineId: number) => {
+    try {
+      setIsLoading(true);
+      backendFacadeClientFunctions()
+        .drawWinner(lotteryId, wineId)
+        .then((result) => {
+          setLotteryInstance(result);
+        });
+    } catch (e) {
+      console.warn(e);
     } finally {
       setIsLoading(false);
     }
