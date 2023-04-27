@@ -25,7 +25,7 @@ const backendFacadeClientFunctions = (): IWineLotteryClientFunctions => {
     buyTicket: async (lotteryId, ticket) => {
       const address = `${BACKEND_URL}/${BACKEND_ENDPOINT_BUY_TICKET}/${lotteryId}`;
       const response = await fetch(address, {
-        method: "PUT",
+        method: "POST",
         body: JSON.stringify(ticket),
         headers: {
           "Content-Type": "application/json",
