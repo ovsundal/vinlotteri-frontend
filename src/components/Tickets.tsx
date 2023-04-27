@@ -8,20 +8,27 @@ import {
 import { ITicket } from "../interfaces/ITicket";
 import { ILotteryOutletContext } from "../interfaces/ILotteryOutletContext";
 import { useOutletContext } from "react-router-dom";
-import { cloneDeep } from "lodash";
+import { cloneDeep, isEmpty } from "lodash";
 
 const Tickets = () => {
   const [ticketList, setTicketList] = useState([] as ITicket[]);
+  // use this object to keep track of input changes in each row before being saved
+  const [ticketListTracker, setTicketListTracker] = useState([] as ITicket[]);
   const { lotteryInstance, newBuyTicketClickHandler }: ILotteryOutletContext =
     useOutletContext();
 
-  // use this object to keep track of input changes in each row
-  const ticketListCopy = cloneDeep(ticketList);
-
   useSetupTicketList(lotteryInstance.tickets, setTicketList);
 
+  useEffect(() => {
+    if (isEmpty(ticketListTracker)) {
+      setTicketListTracker(ticketList);
+    }
+  }, [ticketList, ticketListTracker]);
+
   const handleInputChange = (e: any, number: number) => {
-    ticketListCopy[number - 1].owner = e.target.value;
+    const ticketListTrackerCopy = cloneDeep(ticketListTracker);
+    ticketListTrackerCopy[number - 1].owner = e.target.value;
+    setTicketListTracker(ticketListTrackerCopy);
   };
 
   return (
@@ -55,7 +62,7 @@ const Tickets = () => {
                   <Button
                     variant="outlined"
                     onClick={() =>
-                      newBuyTicketClickHandler(ticketListCopy[number - 1])
+                      newBuyTicketClickHandler(ticketListTracker[number - 1])
                     }
                   >
                     {BUTTON_BUY_TICKET}
